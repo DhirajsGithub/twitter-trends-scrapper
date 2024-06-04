@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Scrape Twitter Trends</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #4caf50;
+      }
+
+      #scrape-button {
+        display: block;
+        width: 200px;
+        margin: 20px auto;
+        padding: 10px 20px;
+        font-size: 16px;
+        color: #fff;
+        background-color: #4caf50;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      #scrape-button:hover {
+        background-color: #45a049;
+      }
+
+      #loading {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      #loading img {
+        width: 50px;
+        height: 50px;
+      }
+
+      #results {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      #results h2 {
+        color: #4caf50;
+      }
+
+      #results p {
+        background-color: #fff;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin: 10px auto;
+        width: 80%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .foot {
+        background-color: #fff;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin: 10px auto;
+        width: 80%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Scrape Twitter Trends</h1>
+    <button id="scrape-button">
+      <i class="fas fa-sync-alt"></i> Run Scrape Script
+    </button>
+    <div id="loading">
+      <img src="https://i.sstatic.net/kOnzy.gif" alt="Loading..." />
+    </div>
+    <div id="results">
+      <!-- The scraped results will be displayed here -->
+    </div>
+    <script>
+      $(document).ready(function () {
+        $("#scrape-button").click(function () {
+          $("#loading").show();
+          $("#results").html(""); // Clear previous results
+          $.ajax({
+            url: '{% url "run_selenium_script" %}',
+            method: "GET",
+            success: function (data) {
+              $("#loading").hide();
+              let trendsHtml = `
+                            <h2>Trends</h2>
+                            <p>Trend 1: ${data.trends.trend1}</p>
+                            <p>Trend 2: ${data.trends.trend2}</p>
+                            <p>Trend 3: ${data.trends.trend3}</p>
+                            <p>Trend 4: ${data.trends.trend4}</p>
+                            <p>Trend 5: ${data.trends.trend5}</p>
+                           <div class="foot">
+                            <h5>Date Time: ${data.date_time}</h5>
+                            <h5>IP Address: ${data.ip_address}</h5>
+                            </div>
+                        `;
+              $("#results").html(trendsHtml);
+            },
+            error: function (error) {
+              $("#loading").hide();
+              $("#results").html(
+                "<p>An error occurred while scraping trends.</p>"
+              );
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
